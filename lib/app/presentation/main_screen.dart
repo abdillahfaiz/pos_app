@@ -26,7 +26,7 @@ class _MainScreenState extends State<MainScreen> {
         onTap: (index) {
           setState(() {
             posisiSaatInit = index;
-          });
+          }); 
         },
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),

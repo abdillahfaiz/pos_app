@@ -63,11 +63,14 @@ class SignInScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 86.0),
-                      AppButton(
-                        label: 'Login',
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/main');
-                        },
+                      SizedBox(
+                        width: double.infinity,
+                        child: AppButton(
+                          label: 'Login',
+                          onPressed: () {
+                            Navigator.pushReplacementNamed(context, '/main');
+                          },
+                        ),
                       ),
                       SizedBox(height: 128),
                       Align(
