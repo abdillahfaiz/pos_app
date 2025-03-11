@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pos_app/app/presentation/main_screen.dart';
+import 'package:pos_app/app/presentation/order_detail_screen.dart';
 import 'package:pos_app/app/presentation/sign_in_screen.dart';
 import 'package:pos_app/app/presentation/splash_screen.dart';
 
@@ -15,9 +16,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       initialRoute: '/',
       routes: {
-        '/' : (context) => SplashScreen(),
-        '/sign-in' : (context) => SignInScreen(),
-        '/main' : (context) => MainScreen(),
+        '/': (context) => SplashScreen(),
+        '/sign-in': (context) => SignInScreen(),
+        '/main': (context) => MainScreen(),
+        '/order-detail': (context) => OrderDetailScreen(),
       },
     );
   }

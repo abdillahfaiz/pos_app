@@ -36,7 +36,9 @@ class _HomeScreenState extends State<HomeScreen> {
     ),
   ];
 
-  int totalAmount = 0;
+  int totalAmount = 20000;
+
+  
 
   void updateTotalPrice() {
     setState(() {
@@ -108,7 +110,19 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ],
                       ),
-                      AppButton(label: 'Process', onPressed: () {}),
+                      AppButton(
+                        label: 'Process',
+                        onPressed: () {
+                          Navigator.pushNamed(
+                            context,
+                            '/order-detail',
+                            arguments: {
+                              'product' : ticketDummy,
+                              'totalAmount' : totalAmount,
+                            },
+                          );
+                        },
+                      ),
                     ],
                   ),
                 ),
