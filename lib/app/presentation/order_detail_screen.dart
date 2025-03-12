@@ -16,7 +16,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
     
     final arguments =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-
+    
     return Scaffold(
       appBar: AppBar(title: const Text('Order Detail')),
       body: Column(

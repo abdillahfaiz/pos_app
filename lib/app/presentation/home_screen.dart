@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:pos_app/app/core/app_color.dart';
 import 'package:pos_app/app/core/components/app_button.dart';
+import 'package:pos_app/app/presentation/order_detail_screen.dart';
 import 'package:pos_app/data/models/ticket_model.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -38,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   int totalAmount = 20000;
 
-  
+
 
   void updateTotalPrice() {
     setState(() {
