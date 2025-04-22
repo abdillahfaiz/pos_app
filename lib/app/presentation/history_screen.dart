@@ -5,10 +5,6 @@ class HistoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Text('INI HISTORY SCREEN'),
-      ),
-    );
+    return Scaffold(body: Center(child: Text('INI HISTORY SCREEN')));
   }
 }

@@ -39,8 +39,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   int totalAmount = 20000;
 
-
-
   void updateTotalPrice() {
     setState(() {
       totalAmount = ticketDummy.fold(
@@ -118,8 +116,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             context,
                             '/order-detail',
                             arguments: {
-                              'product' : ticketDummy,
-                              'totalAmount' : totalAmount,
+                              'product': ticketDummy,
+                              'totalAmount': totalAmount,
                             },
                           );
                         },

@@ -87,7 +87,6 @@ class _TicketScreenState extends State<TicketScreen> {
                             ],
                             onChanged: (value) {
                               kategoriValue = value ?? '';
-                              print(kategoriValue);
                             },
                           ),
                           const SizedBox(height: 24.0),
