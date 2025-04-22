@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pos_app/app/core/string_const/assets_const.dart';
+import 'package:pos_app/data/datasource/local_storage/local_storage.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -13,7 +14,13 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Future.delayed(Duration(seconds: 2), () {
-      Navigator.pushReplacementNamed(context, '/sign-in');
+      var token = LocalStorage().getToken();
+
+      if (token != null) {
+        Navigator.pushReplacementNamed(context, '/main');
+      } else {
+        Navigator.pushReplacementNamed(context, '/sign-in');
+      }
     });
   }
 
