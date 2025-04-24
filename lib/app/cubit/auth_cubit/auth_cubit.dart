@@ -11,9 +11,7 @@ class AuthCubit extends Cubit<AuthState> {
 
     var data = await AuthService().login(email, password);
 
-    data.fold(
-      (left) => emit(state.copyWith(error: left)), 
-      (right) {
+    data.fold((left) => emit(state.copyWith(error: left)), (right) {
       emit(state.copyWith(loginResponse: right));
       LocalStorage().saveToken(right.token ?? '');
     });

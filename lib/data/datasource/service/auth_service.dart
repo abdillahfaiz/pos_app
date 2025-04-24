@@ -12,15 +12,11 @@ class AuthService {
     try {
       var response = await dio.post(
         'http://10.0.2.2:8000/api/login',
-        data: {
-          "email": email, 
-          "password": password
-        },
+        data: {"email": email, "password": password},
       );
 
       var dataResponse = LoginResponseModel.fromMap(response.data);
       return Right(dataResponse);
-      
     } on DioException catch (e) {
       if (e.response?.statusCode == 404) {
         var errorResponse = e.response?.data['message'];

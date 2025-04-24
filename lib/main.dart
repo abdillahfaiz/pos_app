@@ -4,11 +4,11 @@ import 'package:pos_app/app/presentation/main_screen.dart';
 import 'package:pos_app/app/presentation/order_detail_screen.dart';
 import 'package:pos_app/app/presentation/sign_in_screen.dart';
 import 'package:pos_app/app/presentation/splash_screen.dart';
-import 'package:pos_app/data/datasource/local_storage/local_storage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await LocalStorage().init();
+  await Hive.initFlutter();
+  Hive.openBox('user');
   runApp(const MyApp());
 }
 

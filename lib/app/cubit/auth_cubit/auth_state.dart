@@ -8,7 +8,7 @@ class AuthState extends Equatable {
   const AuthState({
     this.loginResponse = const LoginResponseModel(),
     this.isLoading = false,
-    this.error =  ''
+    this.error = '',
   });
 
   final LoginResponseModel loginResponse;
@@ -16,9 +16,7 @@ class AuthState extends Equatable {
   final String error;
 
   @override
-  List<Object> get props => [
-    loginResponse, isLoading, error
-  ];
+  List<Object> get props => [loginResponse, isLoading, error];
 
   AuthState copyWith({
     LoginResponseModel? loginResponse,
