@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:pos_app/app/cubit/product_cubit/product_state.dart';
 import 'package:pos_app/data/datasource/service/product_service.dart';
+import 'package:pos_app/data/models/delete_product_model.dart';
 
 class ProductCubit extends Cubit<ProductState> {
   ProductCubit() : super(ProductState());
@@ -53,5 +54,21 @@ class ProductCubit extends Cubit<ProductState> {
   void resetState() {
     emit(ProductState());
   }
-  
+
+  Future<void> deleteProduct(int id) async {
+    emit(state.copyWith(isLoading: true));
+
+    var data = await ProductService().deleteProduct(id);
+
+    data.fold(
+      (left) => emit(state.copyWith(error: left)),
+      (right) => emit(state.copyWith(deleteSucces: right)),
+    );
+
+    emit(state.copyWith(isLoading: false));
+  }
+
+  void resetDeleteState() {
+    emit(state.copyWith(deleteSucces: DeleteProductModel()));
+  }
 }

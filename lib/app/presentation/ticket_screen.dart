@@ -42,181 +42,209 @@ class __ContentState extends State<_Content> {
   List<Map<String, dynamic>> dataTicket = [];
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {},
-          icon: Image.asset(AssetsConst.backBtn),
-        ),
-        centerTitle: true,
-        title: Text(
-          'Kelola Tiket',
-          style: TextStyle(color: AppColor.mainColor),
-        ),
-        actions: [
-          IconButton(
-            onPressed: () async {
-              var result = await showDialog(
-                context: context,
-                builder: (context) {
-                  return BlocProvider(
-                    create: (context) => ProductCubit(),
-                    child: _CreateProductDialog(),
-                  );
-                },
-              );
+  void dispose() {
+    ticketEditController.dispose();
+    priceEditController.dispose();
+    ticketNameController.dispose();
+    priceController.dispose();
+    super.dispose();
+  }
 
-              if (result == true) {
-                context.read<ProductCubit>().getAllProduct();
-              }
-            },
-            icon: Icon(Icons.add_box_outlined, color: AppColor.mainColor),
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<ProductCubit, ProductState>(
+      listenWhen:
+          (previous, current) => current.deleteSucces != previous.deleteSucces,
+      listener: (context, state) async {
+        if (state.deleteSucces.message != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.deleteSucces.message ?? '')),
+          );
+          await context.read<ProductCubit>().getAllProduct();
+          context.read<ProductCubit>().resetDeleteState();
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            onPressed: () {},
+            icon: Image.asset(AssetsConst.backBtn),
           ),
-        ],
-      ),
-      body: BlocBuilder<ProductCubit, ProductState>(
-        builder: (context, state) {
-          if (state.isLoading) {
-            return Center(
-              child: LoadingAnimationWidget.halfTriangleDot(
-                color: AppColor.mainColor,
-                size: 32,
+          centerTitle: true,
+          title: Text(
+            'Kelola Tiket',
+            style: TextStyle(color: AppColor.mainColor),
+          ),
+          actions: [
+            IconButton(
+              onPressed: () async {
+                var result = await showDialog(
+                  context: context,
+                  builder: (context) {
+                    return BlocProvider(
+                      create: (context) => ProductCubit(),
+                      child: _CreateProductDialog(),
+                    );
+                  },
+                );
+
+                if (result == true) {
+                  context.read<ProductCubit>().getAllProduct();
+                }
+              },
+              icon: Icon(Icons.add_box_outlined, color: AppColor.mainColor),
+            ),
+          ],
+        ),
+        body: BlocBuilder<ProductCubit, ProductState>(
+          builder: (context, state) {
+            if (state.isLoading) {
+              return Center(
+                child: LoadingAnimationWidget.halfTriangleDot(
+                  color: AppColor.mainColor,
+                  size: 32,
+                ),
+              );
+            }
+
+            if (state.error != '') {
+              return Center(child: Text(state.error));
+            }
+
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: RefreshIndicator(
+                onRefresh: () => context.read<ProductCubit>().getAllProduct(),
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: state.productData.length,
+                  itemBuilder: (context, index) {
+                    return Card(
+                      child: ListTile(
+                        title: Text(state.productData[index].name ?? ''),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          spacing: 10,
+                          children: [
+                            Text(state.productData[index].description ?? ''),
+                            Text(
+                              CurrencyFormatter.formatIDR(
+                                state.productData[index].price ?? 0,
+                              ),
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.delete),
+                              onPressed: () async {
+                                await context
+                                    .read<ProductCubit>()
+                                    .deleteProduct(
+                                      state.productData[index].id ?? 0,
+                                    );
+                              },
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.edit),
+                              onPressed: () async {
+                                ticketEditController.text =
+                                    dataTicket[index]['ticket_name'];
+                                priceEditController.text =
+                                    dataTicket[index]['price'];
+
+                                await showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return Dialog(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text('Nama Tiket'),
+                                            TextField(
+                                              controller: ticketEditController,
+                                              decoration: InputDecoration(
+                                                border: OutlineInputBorder(),
+                                                hintText: 'Nama Tiket',
+                                              ),
+                                            ),
+                                            const SizedBox(height: 24.0),
+                                            Text('Harga'),
+                                            TextField(
+                                              controller: priceEditController,
+                                              decoration: InputDecoration(
+                                                border: OutlineInputBorder(),
+                                                hintText: 'Harga Tiket',
+                                              ),
+                                            ),
+                                            const SizedBox(height: 24.0),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                AppButton(
+                                                  label: 'Batalkan',
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  buttonColor: Colors.red,
+                                                ),
+                                                AppButton(
+                                                  label: 'Simpan',
+                                                  onPressed: () {
+                                                    // Cara 1---------
+                                                    dataTicket[index]['ticket_name'] =
+                                                        ticketEditController
+                                                            .text;
+
+                                                    dataTicket[index]['price'] =
+                                                        priceEditController
+                                                            .text;
+
+                                                    //Cara 2-----------
+                                                    // dataTicket[index] = {
+                                                    //   'ticket_name': ticketEditController.text,
+                                                    //   'price': priceEditController.text,
+                                                    //   'category': dataTicket[index]['category'],
+                                                    //   'criteria': dataTicket[index]['criteria'],
+                                                    // };
+
+                                                    setState(() {});
+                                                    Navigator.pop(context);
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ),
             );
-          }
-
-          if (state.error != '') {
-            return Center(child: Text(state.error));
-          }
-
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: RefreshIndicator(
-              onRefresh: () => context.read<ProductCubit>().getAllProduct(),
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: state.productData.length,
-                itemBuilder: (context, index) {
-                  return Card(
-                    child: ListTile(
-                      title: Text(state.productData[index].name ?? ''),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        spacing: 10,
-                        children: [
-                          Text(state.productData[index].description ?? ''),
-                          Text(
-                            CurrencyFormatter.formatIDR(
-                              state.productData[index].price ?? 0,
-                            ),
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.delete),
-                            onPressed: () {
-                              // dataTicket.removeAt(index);
-                              // setState(() {});
-                            },
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.edit),
-                            onPressed: () async {
-                              ticketEditController.text =
-                                  dataTicket[index]['ticket_name'];
-                              priceEditController.text =
-                                  dataTicket[index]['price'];
-
-                              await showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return Dialog(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text('Nama Tiket'),
-                                          TextField(
-                                            controller: ticketEditController,
-                                            decoration: InputDecoration(
-                                              border: OutlineInputBorder(),
-                                              hintText: 'Nama Tiket',
-                                            ),
-                                          ),
-                                          const SizedBox(height: 24.0),
-                                          Text('Harga'),
-                                          TextField(
-                                            controller: priceEditController,
-                                            decoration: InputDecoration(
-                                              border: OutlineInputBorder(),
-                                              hintText: 'Harga Tiket',
-                                            ),
-                                          ),
-                                          const SizedBox(height: 24.0),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              AppButton(
-                                                label: 'Batalkan',
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                },
-                                                buttonColor: Colors.red,
-                                              ),
-                                              AppButton(
-                                                label: 'Simpan',
-                                                onPressed: () {
-                                                  // Cara 1---------
-                                                  dataTicket[index]['ticket_name'] =
-                                                      ticketEditController.text;
-
-                                                  dataTicket[index]['price'] =
-                                                      priceEditController.text;
-
-                                                  //Cara 2-----------
-                                                  // dataTicket[index] = {
-                                                  //   'ticket_name': ticketEditController.text,
-                                                  //   'price': priceEditController.text,
-                                                  //   'category': dataTicket[index]['category'],
-                                                  //   'criteria': dataTicket[index]['criteria'],
-                                                  // };
-
-                                                  setState(() {});
-                                                  Navigator.pop(context);
-                                                },
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                },
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          );
-        },
+          },
+        ),
       ),
     );
   }

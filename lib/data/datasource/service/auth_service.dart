@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:either_dart/either.dart';
 import 'package:pos_app/data/models/login_response_model/login_response_model.dart';
@@ -28,5 +30,27 @@ class AuthService {
         return Left('Undhandle Error : ${e.message}');
       }
     }
+  }
+
+  Future createProduct(
+    File image,
+    String productName,
+    String desc,
+  ) async {
+
+    final formData = FormData.fromMap({
+      'name': productName,
+      'desc': desc,
+      'file': await MultipartFile.fromFile(image.path),
+      // 'files': [
+      //   await MultipartFile.fromFile(image.path),
+      //   await MultipartFile.fromFile(image.path),
+      // ],
+    });
+
+    final response = await dio.post(
+      '/create-product',
+      data: {'name': productName},
+    );
   }
 }

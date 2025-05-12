@@ -3,6 +3,7 @@ import 'package:either_dart/either.dart';
 import 'package:pos_app/data/datasource/local_storage/local_storage.dart';
 import 'package:pos_app/data/models/create_product_error_model/create_product_error_model.dart';
 import 'package:pos_app/data/models/create_product_succes_model.dart';
+import 'package:pos_app/data/models/delete_product_model.dart';
 import 'package:pos_app/data/models/product_model/product_model.dart';
 
 class ProductService {
@@ -52,6 +53,17 @@ class ProductService {
       } else {
         return Left(CreateProductErrorModel(message: 'Error ${e.message}'));
       }
+    }
+  }
+
+  Future<Either<String, DeleteProductModel>> deleteProduct(int id) async {
+    try {
+      var response = await dio.delete('/product/$id');
+
+      var data = DeleteProductModel.fromMap(response.data);
+      return Right(data);
+    } on DioException catch (e) {
+      return Left('Gagal Menghapus Product');
     }
   }
 }
